@@ -3,6 +3,7 @@ import {
   isReferenceObject,
   isSchemaObject,
   OpenAPIObject,
+  ReferenceObject,
   SchemaObject,
 } from "openapi3-ts";
 
@@ -28,7 +29,10 @@ export const getReferenceSchema = (
   }
 
   if (isReferenceObject(referenceSchema)) {
-    return getReferenceSchema(referenceSchema.$ref, openAPIDocument);
+    return getReferenceSchema(
+      (referenceSchema as ReferenceObject).$ref,
+      openAPIDocument
+    );
   }
 
   if (!isSchemaObject(referenceSchema)) {

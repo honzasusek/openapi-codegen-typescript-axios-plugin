@@ -28,6 +28,7 @@ export const getFetcher = ({
        **/
     }`
   }
+  import axios from "axios";
 
 const baseUrl = ${baseUrl ? `"${baseUrl}"` : `""; // TODO add your baseUrl`}
 
@@ -72,22 +73,32 @@ export async function ${camel(prefix)}Fetch<
   TQueryParams,
   TPathParams
 >): Promise<TData> {
+  const fetch = axios.create({
+    method,
+    signal,
+    data: body,
+    headers: {
+      'Content-Type': 'application/json',
+      ...headers,
+    },
+  })
+
   try {
-    const response = await window.fetch(\`\${baseUrl}\${resolveUrl(url, queryParams, pathParams)}\`,
-      {
-        signal,
-        method: method.toUpperCase(),
-        body: body ? JSON.stringify(body) : undefined,
-        headers: {
-          "Content-Type": "application/json",
-          ...headers,
-        },
-      }
-    );
-    if (!response.ok) {
+    const response = await axios({
+      method,
+      signal,
+      data: body,
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      url: \`\${baseUrl}\${resolveUrl(url, queryParams, pathParams)}\`,
+    })
+    
+    if (response.status !== 200) {
       let error: ErrorWrapper<TError>;
       try {
-        error = await response.json();
+        error = response.data
       } catch (e) {
         error = {
           status: "unknown" as const,
@@ -101,20 +112,14 @@ export async function ${camel(prefix)}Fetch<
       throw error;
     }
 
-    if (response.headers.get('content-type')?.includes('json')) {
-      return await response.json();
+    if (response.headers.['content-type']?.includes('json')) {
+      return response.data;
     } else {
       // if it is not a json response, assume it is a blob and cast it to TData
-      return (await response.blob()) as unknown as TData;
+      return await response.data as unknown as TData;
     }
   } catch (e) {
-    throw {
-      status: "unknown" as const,
-      payload:
-        e instanceof Error
-          ? \`Network error (\${e.message})\`
-          : "Network error"
-    }
+    throw new Error(e instanceof Error ? \`Network error (\${e.message})\` : 'Network error')
   }
 }
 

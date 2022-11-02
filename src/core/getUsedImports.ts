@@ -67,11 +67,15 @@ export const getUsedImports = (
       }
     }
     if (imports.utils.type === "named" && ts.isTypeReferenceNode(node)) {
-      if (get(node.typeName, "escapedText", "") === clientErrorStatus) {
+      if (
+        (get(node.typeName, "escapedText", "") as string) === clientErrorStatus
+      ) {
         imports.utils.used = true;
         imports.utils.imports.add(clientErrorStatus);
       }
-      if (get(node.typeName, "escapedText", "") === serverErrorStatus) {
+      if (
+        (get(node.typeName, "escapedText", "") as string) === serverErrorStatus
+      ) {
         imports.utils.used = true;
         imports.utils.imports.add(serverErrorStatus);
       }
@@ -89,7 +93,11 @@ export const getUsedImports = (
       if (i.type === "namespace") {
         return createNamespaceImport(i.namespace, `./${i.from}`);
       } else {
-        return createNamedImport(Array.from(i.imports.values()), `./${i.from}`, true);
+        return createNamedImport(
+          Array.from(i.imports.values()),
+          `./${i.from}`,
+          true
+        );
       }
     }),
   };

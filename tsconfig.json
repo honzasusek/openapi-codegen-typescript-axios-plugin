@@ -1,9 +1,21 @@
 {
-  "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "target": "ESNext",
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true,
+    "importHelpers": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "esModuleInterop": true,
+    "downlevelIteration": true,
+    "noFallthroughCasesInSwitch": true,
+    "sourceMap": true,
+    "declaration": true,
     "baseUrl": "./",
     "module": "CommonJS",
-    "lib": ["DOM"]
+    "lib": ["ESNext", "DOM"]
   },
   "include": ["src/**/*"]
 }
