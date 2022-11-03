@@ -112,7 +112,7 @@ export async function ${camel(prefix)}Fetch<
       throw error;
     }
 
-    if (response.headers.['content-type']?.includes('json')) {
+    if (response.headers['content-type']?.includes('json')) {
       return response.data;
     } else {
       // if it is not a json response, assume it is a blob and cast it to TData
