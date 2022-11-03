@@ -2,7 +2,7 @@
   "name": "@honzasusek/openapi-codegen-typescript-axios-plugin",
   "version": "0.0.1",
   "description": "Typescript+Axios plugin for OpenAPI Codegen",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "publishConfig": {
     "access": "public"
   },
