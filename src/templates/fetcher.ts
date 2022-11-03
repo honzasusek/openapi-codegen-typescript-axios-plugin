@@ -73,16 +73,6 @@ export async function ${camel(prefix)}Fetch<
   TQueryParams,
   TPathParams
 >): Promise<TData> {
-  const fetch = axios.create({
-    method,
-    signal,
-    data: body,
-    headers: {
-      'Content-Type': 'application/json',
-      ...headers,
-    },
-  })
-
   try {
     const response = await axios({
       method,
@@ -109,7 +99,7 @@ export async function ${camel(prefix)}Fetch<
         };
       }
 
-      throw error;
+      throw new Error((error as { payload: string }).payload);
     }
 
     if (response.headers['content-type']?.includes('json')) {
@@ -130,6 +120,6 @@ const resolveUrl = (
 ) => {
   let query = new URLSearchParams(queryParams).toString();
   if (query) query = \`?\${query}\`;
-  return url.replace(/\\{\\w*\\}/g, (key) => pathParams[key.slice(1, -1)]) + query;
+  return url.replace(/\\{\\w*\\}/gu, (key) => pathParams[key.slice(1, -1)]) + query;
 };
 `;
