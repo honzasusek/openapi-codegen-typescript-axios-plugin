@@ -52,7 +52,7 @@ export type ${pascal(
       : `${pascal(prefix)}FetcherExtraProps`
   }
 
-export async function ${camel(prefix)}Fetch<
+export async function ${camel(prefix)}fetch<
   TData,
   TError,
   TBody extends {} | undefined | null,
@@ -87,6 +87,7 @@ export async function ${camel(prefix)}Fetch<
     
     if (response.status !== 200) {
       let error: ErrorWrapper<TError>;
+
       try {
         error = response.data
       } catch (e) {
@@ -105,8 +106,10 @@ export async function ${camel(prefix)}Fetch<
     if (response.headers['content-type']?.includes('json')) {
       return response.data;
     } else {
+
       // if it is not a json response, assume it is a blob and cast it to TData
       return await response.data as unknown as TData;
+      
     }
   } catch (e) {
     throw new Error(e instanceof Error ? \`Network error (\${e.message})\` : 'Network error')
