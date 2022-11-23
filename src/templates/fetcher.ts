@@ -77,12 +77,13 @@ export async function ${camel(prefix)}fetch<
     const response = await axios({
       method,
       signal,
-      data: body,
+      data: { body },
       headers: {
         'Content-Type': 'application/json',
         ...headers,
       },
-      url: \`\${baseUrl}\${resolveUrl(url, queryParams, pathParams)}\`,
+      baseURL: baseUrl,
+      url: \`\${resolveUrl(url, queryParams, pathParams)}\`,
     })
     
     if (response.status !== 200) {
