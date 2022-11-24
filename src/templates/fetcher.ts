@@ -28,7 +28,7 @@ export const getFetcher = ({
        **/
     }`
   }
-  import axios, { AxiosResponse } from "axios";
+  import axios from "axios";
 
 const baseUrl = ${baseUrl ? `"${baseUrl}"` : `""; // TODO add your baseUrl`}
 
@@ -73,7 +73,7 @@ export async function ${camel(prefix)}fetch<
   TQueryParams,
   TPathParams
 >): Promise<TData> {
-  return axios<any, AxiosResponse<any, any>, TBody>({
+  return axios({
     method,
     signal,
     data: body,
