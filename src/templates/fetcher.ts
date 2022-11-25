@@ -30,8 +30,6 @@ export const getFetcher = ({
   }
   import axios from "axios";
 
-const baseUrl = ${baseUrl ? `"${baseUrl}"` : `""; // TODO add your baseUrl`}
-
 export type ErrorWrapper<TError> = 
   | TError
   | { status: "unknown"; payload: string };
@@ -60,6 +58,7 @@ export async function ${camel(prefix)}fetch<
   TQueryParams extends {},
   TPathParams extends {}
 >({
+  baseURL,
   url,
   method,
   body,
@@ -76,12 +75,12 @@ export async function ${camel(prefix)}fetch<
   return axios({
     method,
     signal,
+    baseURL,
     data: body,
     headers: {
       'Content-Type': 'application/json',
       ...headers,
     },
-    baseURL: baseUrl,
     url: \`\${resolveUrl(url, queryParams, pathParams)}\`,
   })
     .then((response) => response.data as TData)

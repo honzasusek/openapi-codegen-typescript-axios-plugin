@@ -2,14 +2,45 @@ import { pascal } from "case";
 
 export const getContext = (prefix: string, componentsFile: string) =>
   `import type { QueryKey, UseQueryOptions } from "@tanstack/react-query";
+  import { createContext, useContext as useReactContext } from 'react'
   import { QueryOperation } from './${componentsFile}';
   
+  export const ${pascal(prefix)}fetcherContextDefaultValue = {
+    fetcherOptions: {},
+    queryOptions: {},
+    queryKeyFn: (operation: QueryOperation) => {
+      const queryKey: unknown[] = hasPathParams(operation)
+        ? operation.path
+            .split("/")
+            .filter(Boolean)
+            .map((i) => resolvePathParam(i, operation.variables.pathParams))
+        : operation.path.split("/").filter(Boolean);
+
+      if (hasQueryParams(operation)) {
+        queryKey.push(operation.variables.queryParams);
+      }
+
+      if (hasBody(operation)) {
+        queryKey.push(operation.variables.body);
+      }
+
+      return queryKey;
+    }
+  }
+
+  export const ${pascal(prefix)}FetcherContext = createContext(${pascal(
+    prefix
+  )}fetcherContextDefaultValue)
+
   export type ${pascal(prefix)}Context = {
     fetcherOptions: {
+      baseURL?: string
       /**
        * Headers to inject in the fetcher
        */
-      headers?: {};
+      headers?: {
+        Authorization?: string
+      }
       /**
        * Query params to inject in the fetcher
        */
@@ -41,28 +72,7 @@ export const getContext = (prefix: string, componentsFile: string) =>
  >(
    _queryOptions?: Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, 'queryKey' | 'queryFn'>
  ): ${pascal(prefix)}Context {
-    return {
-      fetcherOptions: {},
-      queryOptions: {},
-      queryKeyFn: (operation) => {
-        const queryKey: unknown[] = hasPathParams(operation)
-          ? operation.path
-              .split("/")
-              .filter(Boolean)
-              .map((i) => resolvePathParam(i, operation.variables.pathParams))
-          : operation.path.split("/").filter(Boolean);
-
-        if (hasQueryParams(operation)) {
-          queryKey.push(operation.variables.queryParams);
-        }
-
-        if (hasBody(operation)) {
-          queryKey.push(operation.variables.body);
-        }
-
-        return queryKey;
-      }
-    }
+    return useReactContext(${pascal(prefix)}FetcherContext)
   };
 
   // Helpers
@@ -80,23 +90,17 @@ export const getContext = (prefix: string, componentsFile: string) =>
     operation: QueryOperation
   ): operation is QueryOperation & {
     variables: { pathParams: Record<string, string> };
-  } => {
-    return Boolean((operation.variables as any).pathParams);
-  };
+  } => Boolean((operation.variables as any).pathParams);
 
   const hasBody = (
     operation: QueryOperation
   ): operation is QueryOperation & {
     variables: { body: Record<string, unknown> };
-  } => {
-    return Boolean((operation.variables as any).body);
-  };
+  } => Boolean((operation.variables as any).body);
 
   const hasQueryParams = (
     operation: QueryOperation
   ): operation is QueryOperation & {
     variables: { queryParams: Record<string, unknown> };
-  } => {
-    return Boolean((operation.variables as any).queryParams);
-  };
+  } => Boolean((operation.variables as any).queryParams);
   `;
