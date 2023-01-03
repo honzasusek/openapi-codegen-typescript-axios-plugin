@@ -20,7 +20,7 @@
     "plugin",
     "typescript"
   ],
-  "author": "Fabien Bernard, Honza Susek",
+  "author": "Honza Susek",
   "license": "MIT",
   "dependencies": {
     "case": "^1.6.3",
