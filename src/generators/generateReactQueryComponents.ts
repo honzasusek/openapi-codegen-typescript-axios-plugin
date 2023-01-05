@@ -14,7 +14,6 @@ import { getOperationTypes } from "../core/getOperationTypes";
 import { createNamedImport } from "../core/createNamedImport";
 
 import { getFetcher } from "../templates/fetcher";
-import { getContext } from "../templates/context";
 import { getUtils } from "../templates/utils";
 import { createNamespaceImport } from "../core/createNamespaceImport";
 
@@ -80,8 +79,8 @@ export const generateReactQueryComponents = async (
   const keyManagerItems: ts.TypeLiteralNode[] = [];
 
   const fetcherFilename = formatFilename(filenamePrefix + "-fetcher");
-  const contextFilename = formatFilename(filenamePrefix + "-context");
   const utilsFilename = formatFilename(filenamePrefix + "-utils");
+  const contextFilename = formatFilename(filenamePrefix + "-context");
 
   if (!context.existsFile(`${fetcherFilename}.ts`)) {
     context.writeFile(
@@ -91,13 +90,6 @@ export const generateReactQueryComponents = async (
         contextPath: contextFilename,
         baseUrl: get(context.openAPIDocument, "servers.0.url"),
       })
-    );
-  }
-
-  if (!context.existsFile(`${contextFilename}.ts`)) {
-    context.writeFile(
-      `${contextFilename}.ts`,
-      getContext(filenamePrefix, filename)
     );
   }
 

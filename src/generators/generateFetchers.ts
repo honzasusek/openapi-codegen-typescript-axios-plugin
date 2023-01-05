@@ -16,6 +16,7 @@ import { createNamedImport } from "../core/createNamedImport";
 import { getFetcher } from "../templates/fetcher";
 import { getUtils } from "../templates/utils";
 import { createNamespaceImport } from "../core/createNamespaceImport";
+import { getContext } from "src/templates/context";
 
 export type Config = ConfigBase & {
   /**
@@ -74,6 +75,7 @@ export const generateFetchers = async (context: Context, config: Config) => {
   const fetcherImports = [fetcherFn];
 
   const fetcherFilename = formatFilename(filenamePrefix + "-fetcher");
+  const contextFilename = formatFilename(filenamePrefix + "-context");
   const utilsFilename = formatFilename(filenamePrefix + "-utils");
 
   const fetcherExtraPropsTypeName = `${c.pascal(
@@ -84,11 +86,19 @@ export const generateFetchers = async (context: Context, config: Config) => {
     ts.SyntaxKind.VoidKeyword
   );
 
+  if (!context.existsFile(`${contextFilename}.ts`)) {
+    context.writeFile(
+      `${contextFilename}.ts`,
+      getContext(filenamePrefix, filename)
+    );
+  }
+
   if (!context.existsFile(`${fetcherFilename}.ts`)) {
     context.writeFile(
       `${fetcherFilename}.ts`,
       getFetcher({
         prefix: filenamePrefix,
+        contextPath: contextFilename,
         baseUrl: get(context.openAPIDocument, "servers.0.url"),
       })
     );
