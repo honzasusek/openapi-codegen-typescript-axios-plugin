@@ -16,7 +16,7 @@ import { createNamedImport } from "../core/createNamedImport";
 import { getFetcher } from "../templates/fetcher";
 import { getUtils } from "../templates/utils";
 import { createNamespaceImport } from "../core/createNamespaceImport";
-import { getContext } from "src/templates/context";
+import { getContext } from "../templates/context";
 
 export type Config = ConfigBase & {
   /**
